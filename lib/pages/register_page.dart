@@ -203,7 +203,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 onPressed: () {
                   db.collection('todos').add({
                     'nroboleto': itemCountAll,
-                    'cliente': 'Jose',
+                    'cliente': 'root',
                     'fecha': fecha,
                     'origen': origen,
                     'destino': destino,

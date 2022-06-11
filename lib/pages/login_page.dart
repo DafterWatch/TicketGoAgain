@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final myController = TextEditingController();
   bool isAPIcallProcess = false;
   bool hidePassword = true;
   GlobalKey<FormState> globalFormKey = GlobalKey<FormState>();
@@ -97,20 +99,26 @@ class _LoginPageState extends State<LoginPage> {
               prefixIcon: const Icon(Icons.person),
               showPrefixIcon: true,
               "username",
-              "Username", (onValidateVal) {
-            if (onValidateVal.isEmpty) {
-              return "Username can't be empty.";
-            }
-            return null;
-          }, (onSavedVal) {
-            username = onSavedVal;
-          },
+              "Username",
+              (onValidateVal) {
+                if (onValidateVal.isEmpty) {
+                  return "Username can't be empty.";
+                }
+                return null;
+              },
+              (onSavedVal) {
+                //username = onSavedVal.toString();
+              },
               borderFocusColor: Colors.white,
               prefixIconColor: Colors.white,
               borderColor: Colors.white,
               textColor: Colors.white,
               hintColor: Colors.white.withOpacity(0.7),
-              borderRadius: 10),
+              borderRadius: 10,
+              onChange: (val) {
+                //print(val.toString());
+                username = val.toString();
+              }),
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: FormHelper.inputFieldWidget(
@@ -121,12 +129,12 @@ class _LoginPageState extends State<LoginPage> {
               "Password",
               (onValidateVal) {
                 if (onValidateVal.isEmpty) {
-                  return "Username can't be empty.";
+                  return "Password can't be empty.";
                 }
                 return null;
               },
               (onSavedVal) {
-                password = onSavedVal;
+                password = onSavedVal.toString();
               },
               borderFocusColor: Colors.white,
               prefixIconColor: Colors.white,
@@ -135,6 +143,9 @@ class _LoginPageState extends State<LoginPage> {
               hintColor: Colors.white.withOpacity(0.7),
               borderRadius: 10,
               obscureText: hidePassword,
+              onChange: (val) {
+                password = val.toString();
+              },
               suffixIcon: IconButton(
                 onPressed: () {
                   setState(() {
@@ -148,87 +159,36 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 25, top: 10),
-              child: RichText(
-                text: TextSpan(
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14.0,
-                  ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: 'Forget Password ?',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        decoration: TextDecoration.underline,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          print('Forget Password');
-                        },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
           const SizedBox(
             height: 20,
           ),
           Center(
             child: FormHelper.submitButton(
               "Login",
-              () {},
+              () {
+                final docRef = FirebaseFirestore.instance
+                    .collection("usuarios")
+                    .where("usuario", isEqualTo: username)
+                    .where("pass", isEqualTo: password)
+                    .get()
+                    .then(
+                      (res) => {
+                        if (res.docs.length > 0)
+                          {Navigator.pushNamed(context, '/crud')}
+                        else
+                          {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("Usuario o contraseña incorrectos"),
+                            ))
+                          }
+                      },
+                      onError: (e) => print("Error completing: $e"),
+                    );
+              },
               btnColor: HexColor('#283B71'),
               borderColor: Colors.white,
               txtColor: Colors.white,
               borderRadius: 10,
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          const Center(
-            child: Text(
-              "OR",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 25, top: 10),
-              child: RichText(
-                text: TextSpan(
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14.0,
-                  ),
-                  children: <TextSpan>[
-                    const TextSpan(text: "Don't have an account? "),
-                    TextSpan(
-                      text: 'Sign Up',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        decoration: TextDecoration.underline,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.pushNamed(context, '/crud');
-                        },
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
         ],
