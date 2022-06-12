@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:snippet_coder_utils/FormHelper.dart';
 import 'package:snippet_coder_utils/ProgressHUD.dart';
 import 'package:snippet_coder_utils/hex_color.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -42,6 +43,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _loginUI(BuildContext context) {
+    userAccelerometerEvents.listen((UserAccelerometerEvent event) {
+      if (event.y < -5) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Porfavor no agite el celular"),
+        ));
+      }
+    });
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -70,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                 Align(
                   alignment: Alignment.center,
                   child: Image.asset(
-                    'images/logo.png',
+                    'assets/images/logo.png',
                     height: 150,
                     width: 150,
                     fit: BoxFit.contain,
