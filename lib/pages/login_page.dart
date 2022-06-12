@@ -191,6 +191,16 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: 10,
             ),
           ),
+          Center(
+              child: TextButton(
+            style: TextButton.styleFrom(
+              textStyle: const TextStyle(fontSize: 20),
+            ),
+            onPressed: () {
+              Navigator.pushNamed(context, '/map');
+            },
+            child: const Text('Ir Mapa'),
+          ))
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:login_api_nodejs/pages/login_page.dart';
+import 'package:login_api_nodejs/pages/map.dart';
 import 'package:login_api_nodejs/pages/register_page.dart';
 
 void main() async {
@@ -31,7 +32,8 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) => const LoginPage(),
-        '/crud': (context) => const RegisterPage()
+        '/crud': (context) => const RegisterPage(),
+        '/map': (context) => const MapPage()
       },
     );
   }
