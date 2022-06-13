@@ -25,7 +25,7 @@ class _MapPageState extends State<MapPage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Google Prueba Locations'),
+          title: const Text('Mapa de ubicación'),
           backgroundColor: Colors.blue[700],
         ),
         body: GoogleMap(

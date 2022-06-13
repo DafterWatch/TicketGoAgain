@@ -8,6 +8,7 @@ import 'package:snippet_coder_utils/FormHelper.dart';
 import 'package:snippet_coder_utils/ProgressHUD.dart';
 import 'package:snippet_coder_utils/hex_color.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import 'package:local_auth/local_auth.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -17,6 +18,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  late LocalAuthentication _localAth;
+  bool _isBiometricAvailable = false;
   final myController = TextEditingController();
   bool isAPIcallProcess = false;
   bool hidePassword = true;
@@ -26,6 +29,12 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    _localAth = LocalAuthentication();
+    _localAth.canCheckBiometrics.then((b) {
+      setState(() {
+        _isBiometricAvailable = b;
+      });
+    });
     return SafeArea(
       child: Scaffold(
         backgroundColor: HexColor('#283B71'),
@@ -208,7 +217,28 @@ class _LoginPageState extends State<LoginPage> {
               Navigator.pushNamed(context, '/map');
             },
             child: const Text('Ir Mapa'),
-          ))
+          )),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: IconButton(
+                onPressed: () async {
+                  bool didAuthenticate = await _localAth.authenticate(
+                      localizedReason: "Iniciar sesion con huella");
+                  if (didAuthenticate) {
+                    {
+                      Navigator.pushNamed(context, '/crud');
+                    }
+                  }
+                },
+                icon: Icon(
+                  Icons.fingerprint,
+                  size: 50.0,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
